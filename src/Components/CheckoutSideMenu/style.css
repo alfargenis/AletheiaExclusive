@@ -1,0 +1,17 @@
+.checkout-side-menu {
+  width: 360px;
+  height: calc(100vh - 68px);
+  top: 68px;
+  transform: translateX(100%);
+  transition: transform 0.5s ease-out;
+  display: flex;
+  flex-direction: column;
+}
+
+.slide-in {
+  transform: translateX(0);
+}
+
+.hidden {
+  transform: none;
+}
