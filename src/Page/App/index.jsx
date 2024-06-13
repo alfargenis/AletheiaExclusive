@@ -32,7 +32,7 @@ const AppRoutes = () => {
 const App = () => {
   return (
     <CartContextProvider>
-      <BrowserRouter>
+      <BrowserRouter basename='/AletheiaExclusive'>
         <AppRoutes />
         <Navbar />
         <CheckoutSideMenu />
