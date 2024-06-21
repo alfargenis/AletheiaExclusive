@@ -44,10 +44,14 @@ const CheckoutSideMenu = () => {
             ${totalPrice(context.cartProducts)}
           </span>
         </p>
-        <Link to='/my-orders/last'>
+        <Link to={`${context.signOut ? '/sign-in' : '/my-orders/last'}`}>
           <button
             className='w-full bg-black py-3 text-white rounded-lg'
-            onClick={context.handleCheckout}
+            onClick={() => {
+              if (!context.signOut) {
+                context.handleCheckout();
+              }
+            }}
           >
             Checkout
           </button>

@@ -3,7 +3,35 @@ import { totalPrice } from '../utils';
 
 export const CartContext = createContext();
 
+// eslint-disable-next-line react-refresh/only-export-components
+export const initializeLocalStorage = () => {
+  const accountInLocalStorage = localStorage.getItem('account');
+  const signOutInLocalStorage = localStorage.getItem('sign-out');
+  let parsedAccount;
+  let parsedSignOut;
+
+  if (!accountInLocalStorage) {
+    localStorage.setItem('account', JSON.stringify({}));
+    parsedAccount = {};
+  } else {
+    // eslint-disable-next-line no-unused-vars
+    parsedAccount = JSON.parse(accountInLocalStorage);
+  }
+
+  if (!signOutInLocalStorage) {
+    localStorage.setItem('sign-out', JSON.stringify(false));
+    parsedSignOut = false;
+  } else {
+    // eslint-disable-next-line no-unused-vars
+    parsedSignOut = JSON.parse(signOutInLocalStorage);
+  }
+};
+
 export const CartContextProvider = ({ children }) => {
+  //Estados locales Account y SignIn
+  const [account, setAccount] = useState({});
+  const [signOut, setSignOut] = useState(false);
+
   //Contador carrito
   const [count, setCount] = useState(0);
 
@@ -107,18 +135,22 @@ export const CartContextProvider = ({ children }) => {
   const [order, setOrder] = useState([]);
 
   const handleCheckout = () => {
-    const orderToAdd = {
-      date: new Date().toISOString(),
-      id: crypto.randomUUID().substring(0, 8),
-      products: cartProducts,
-      totalProducts: cartProducts.length,
-      totalPrice: totalPrice(cartProducts),
-    };
-    setOrder([...order, orderToAdd]);
-    setCartProducts([]);
-    setCount(0);
-    setSearchInput(null);
-    closeCheckoutSideMenu();
+    if (account || Object.keys(account).length != 0 || !signOut) {
+      const orderToAdd = {
+        date: new Date().toISOString(),
+        id: crypto.randomUUID().substring(0, 8),
+        products: cartProducts,
+        totalProducts: cartProducts.length,
+        totalPrice: totalPrice(cartProducts),
+      };
+      setOrder([...order, orderToAdd]);
+      setCartProducts([]);
+      setCount(0);
+      setSearchInput(null);
+      closeCheckoutSideMenu();
+    } else {
+      alert('Debes iniciar sesión para realizar una compra');
+    }
   };
 
   //GET PRODUCTS DE LA API
@@ -190,6 +222,10 @@ export const CartContextProvider = ({ children }) => {
         setFilteredItems,
         selectedCategory,
         setSelectedCategory,
+        account,
+        setAccount,
+        signOut,
+        setSignOut,
       }}
     >
       {children}

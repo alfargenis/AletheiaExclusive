@@ -12,8 +12,103 @@ const Navbar = () => {
     context.setSelectedCategory(category);
   };
 
+  const signOut = localStorage.getItem('sign-out');
+  const parsedSignOut = JSON.parse(signOut);
+  const isUserSignOut = context.signOut || parsedSignOut;
+
+  const handleSignOut = () => {
+    const stringifiedSignOut = JSON.stringify(true);
+    localStorage.setItem('sign-out', stringifiedSignOut);
+    context.setSignOut(true);
+  };
+
+  const getAccountEmail = () => {
+    const account = localStorage.getItem('account');
+    if (account) {
+      const parsedAccount = JSON.parse(account);
+      return parsedAccount.email;
+    }
+    return null;
+  };
+  const renderView = () => {
+    if (isUserSignOut) {
+      return (
+        <>
+          <li>
+            <NavLink
+              to='/sign-in'
+              className={({ isActive }) => (isActive ? activeStyle : undefined)}
+              onClick={() => handleSignOut()}
+            >
+              Iniciar Sesion
+            </NavLink>
+          </li>
+          <nav className='relative flex gap-0.5 items-center'>
+            <ul>
+              <li className='flex gap-2'>
+                <ShoppingBagIcon
+                  className='w-5 h-5 text-black cursor-pointer'
+                  onClick={context.openCheckoutSideMenu}
+                />
+                <div className='absolute bottom-3 left-3 flex justify-center items-center rounded-full bg-black w-4 h-4 text-xs text-white'>
+                  {context.count}
+                </div>
+              </li>
+            </ul>
+            {context.isCheckoutSideMenuOpen}
+          </nav>
+        </>
+      );
+    } else {
+      return (
+        <>
+          <li className='text-black/60'>{getAccountEmail()}</li>
+          <li>
+            <NavLink
+              to='/my-orders'
+              className={({ isActive }) => (isActive ? activeStyle : undefined)}
+            >
+              Mis Ordenes
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to='/my-account'
+              className={({ isActive }) => (isActive ? activeStyle : undefined)}
+            >
+              Mi Cuenta
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to='/sign-in'
+              className={({ isActive }) => (isActive ? activeStyle : undefined)}
+              onClick={() => handleSignOut()}
+            >
+              Cerrar Sesion
+            </NavLink>
+          </li>
+          <nav className='relative flex gap-0.5 items-center'>
+            <ul>
+              <li className='flex gap-2'>
+                <ShoppingBagIcon
+                  className='w-5 h-5 text-black cursor-pointer'
+                  onClick={context.openCheckoutSideMenu}
+                />
+                <div className='absolute bottom-3 left-3 flex justify-center items-center rounded-full bg-black w-4 h-4 text-xs text-white'>
+                  {context.count}
+                </div>
+              </li>
+            </ul>
+            {context.isCheckoutSideMenuOpen}
+          </nav>
+        </>
+      );
+    }
+  };
+
   return (
-    <nav className='flex justify-between items-center fixed z-10 top-0 w-full py-5 px-8 text-sm font-light'>
+    <nav className='flex justify-between items-center fixed z-10 top-0 w-full py-5 px-8 text-sm font-light bg-white'>
       <ul className='flex justify-center gap-3'>
         <li className='flex items-center h-4'>
           <NavLink to='/'>
@@ -80,37 +175,7 @@ const Navbar = () => {
           </NavLink>
         </li>
       </ul>
-      <ul className='flex justify-center gap-3'>
-        <li className='text-black/60'>aletheiaexclusive@gmail.com</li>
-        <li>
-          <NavLink
-            to='/my-orders'
-            className={({ isActive }) => (isActive ? activeStyle : undefined)}
-          >
-            Mis Ordenes
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to='/my-account'
-            className={({ isActive }) => (isActive ? activeStyle : undefined)}
-          >
-            Mi Cuenta
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to='/sign-in'
-            className={({ isActive }) => (isActive ? activeStyle : undefined)}
-          >
-            Iniciar Sesion
-          </NavLink>
-        </li>
-        <li className='flex gap-2'>
-          <ShoppingBagIcon className='w-5 h-5 text-black' />
-          <div className='text-black text-base'>{context.count}</div>
-        </li>
-      </ul>
+      <ul className='flex justify-center gap-3'>{renderView()}</ul>
     </nav>
   );
 };
